@@ -39,7 +39,7 @@ class ConfigError(ValueError):
 class Service(object):
     def __init__(self, name, client=None, project='default', links=[], **options):
         if not re.match('^[a-zA-Z0-9]+$', name):
-            raise ConfigError('Invalid name: %s' % name)
+            raise ConfigError('Invalid name: %s. Service names can only contain letters and numbers.' % repr(name))
         if not re.match('^[a-zA-Z0-9]+$', project):
             raise ConfigError('Invalid project: %s' % project)
         if 'image' in options and 'build' in options:
