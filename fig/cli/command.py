@@ -61,10 +61,16 @@ class Command(DocoptCommand):
             return verbose_proxy.VerboseProxy('docker', client)
         return client
 
+    def __expand_env_variables(self, yaml_path):
+        file_content = open(yaml_path).read()
+        for k, v in os.environ.iteritems():
+            if file_content.find('$' + k) != -1:
+                file_content = file_content.replace('$' + k, v)
+        return file_content
+
     def get_config(self, config_path):
         try:
-            with open(config_path, 'r') as fh:
-                return yaml.safe_load(fh)
+            config = yaml.safe_load(self.__expand_env_variables(config_path))
         except IOError as e:
             if e.errno == errno.ENOENT:
                 raise errors.FigFileNotFound(os.path.basename(e.filename))
